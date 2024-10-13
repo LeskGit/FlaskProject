@@ -1,7 +1,7 @@
 # FlaskProject
 
-Devs : 
- ## Axel MEUNIER
- ## Corentin THUAULT
+### Devs : 
+Axel MEUNIER
+Corentin THUAULT
 
-Web server with Flask python.
+### Web server with Flask python.
