@@ -37,14 +37,6 @@ def home():
         title="Hello World")
     
     
-@app.route ("/name")
-def show_name():
-    return render_template(
-        "home.html",
-        title="name",
-        names=["Pierre", "Jean", "Axel"])
-    
-    
 @app.route ("/sample")
 def sample():
     return render_template(
