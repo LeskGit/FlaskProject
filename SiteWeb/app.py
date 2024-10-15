@@ -25,7 +25,7 @@ def mkpath (p) -> None:
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = ('sqlite:///'+mkpath('../SiteWeb.db'))
-=======
+
 # Chargement de la base de données
 
 db = SQLAlchemy(app)
