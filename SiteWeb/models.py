@@ -52,13 +52,13 @@ class Book(db.Model):
         return "<Book (%d) %s>" % (self.id , self.title)
     
 
-def get_sample() -> List[Book]:
-    """ retourne un échantillon de 10 livres
+def get_sample() -> list[Book]:
+    """ retourne tous les livres
 
     Returns:
         List[Book]: une liste de livres
     """
-    return Book.query.limit(10).all() 
+    return Book.query.all() 
 
 
 
