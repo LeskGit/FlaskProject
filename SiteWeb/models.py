@@ -3,9 +3,9 @@
 import yaml, os.path
 from .app import db
 from flask_login import UserMixin
-#from .app import login_manager
+from .app import login_manager
 
-"""@login_manager.user_loader
+@login_manager.user_loader
 def load_user(username):
     return User.query.get(username)
 
@@ -17,7 +17,7 @@ class User(db.Model, UserMixin):
     def get_id(self):
         return self.username
     
-"""
+
 
 class Author(db.Model):
     id = db.Column(db.Integer,primary_key = True)
