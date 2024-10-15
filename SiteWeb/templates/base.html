@@ -4,7 +4,7 @@
     {% block head %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <link rel="stylesheet" href="{{url_for('static', filename='home.css')}}">
     {% block styles %}
     <!-- Bootstrap CSS -->
     {{ bootstrap.load_css() }}
@@ -36,10 +36,21 @@
                 <a class="nav-link disabled">Disabled</a>
               </li>
             </ul>
+            
+          
+              
             <form class="d-flex" role="search">
               <input class="form-control me-2" type="search" placeholder="Recherche" aria-label="Search">
               <button class="btn btn-outline-success" type="submit">Recherche</button>
             </form>
+            <ul id="userlog" class="nav navbar-nav navbar-right">
+              {% if current_user.is_authenticated %}
+                  <li><a>{{ current_user.username }}</a></li>
+                  <li><a href="{{ url_for('logout') }}">
+                      <span class="glyphicon glyphicon-log-out" title="Logout"></span>
+                  </a></li>
+              {% endif %}
+          </ul>
           </div>
         </div>
       </nav>

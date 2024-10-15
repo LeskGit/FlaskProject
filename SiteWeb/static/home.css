@@ -1,4 +1,4 @@
-h1 {color: red;}
+h1 {color: rgb(0, 0, 0);}
 div.sample{
  text-align: center;
  margin-left: 25%;
@@ -16,3 +16,8 @@ main > .container {
     padding: 60px 15px 0;
    }
    
+#userlog  {
+color: #3498db; 
+margin-left: 2%;
+
+}
