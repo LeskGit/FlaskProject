@@ -31,7 +31,7 @@ def loaddb(filename : str) -> None:
         o = Book(price = b["price"],
                 title = b["title"],
                 url = b["url"] ,
-                image = b["img"] ,
+                img = b["img"] ,
                 author_id = a.id)
         db.session.add(o)
     db.session.commit()

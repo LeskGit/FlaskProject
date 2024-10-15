@@ -1,9 +1,9 @@
 import yaml, os.path
 from .app import db
 from flask_login import UserMixin
-#from .app import login_manager
+from .app import login_manager
 
-"""@login_manager.user_loader
+@login_manager.user_loader
 def load_user(username):
     return User.query.get(username)
 
@@ -15,7 +15,7 @@ class User(db.Model, UserMixin):
     def get_id(self):
         return self.username
     
-"""
+
 
 class Author(db.Model):
     """
@@ -39,7 +39,7 @@ class Book(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     price = db.Column(db.Float)
     url = db.Column(db.String(200))
-    image = db.Column(db.String(200))
+    img = db.Column(db.String(200))
     title = db.Column(db.String(100))
     author_id = db.Column(db.Integer, db.ForeignKey("author.id"))
     author = db.relationship("Author", backref=db.backref("books", lazy="dynamic"))
@@ -59,6 +59,7 @@ def get_sample() -> List[Book]:
         List[Book]: une liste de livres
     """
     return Book.query.limit(10).all() 
+
 
 
 def get_author(id : int) -> Author:

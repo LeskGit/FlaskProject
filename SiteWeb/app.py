@@ -22,9 +22,12 @@ def mkpath (p) -> None:
         os.path.join(
             os.path.dirname( __file__ ),
             p))
-    
+
+
+app.config['SQLALCHEMY_DATABASE_URI'] = ('sqlite:///'+mkpath('../SiteWeb.db'))
+=======
 # Chargement de la base de données
-app.config['SQLALCHEMY_DATABASE_URI'] = ('sqlite:///'+mkpath('../ServWeb.db'))
+
 db = SQLAlchemy(app)
 
 # Configuration d'une clé secrète (pour les sessions utilisateurs)
