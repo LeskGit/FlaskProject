@@ -1,20 +1,21 @@
-
-
-
 import click
 from .app import app, db
 
 @app.cli.command()
 @click.argument('filename')
 
-def loaddb(filename):
+def loaddb(filename : str) -> None:
+    """ Permet de charger des données dans les tables 
+        authors et books à d'un fichier YAML
+    Args:
+        filename (str): le chemin du fichier YAML
+    """
     db.create_all()
     
     import yaml
     books = yaml.safe_load(open(filename))
     
     from .models import Author, Book
-    
     
     authors = {}
     for b in books:
@@ -24,7 +25,6 @@ def loaddb(filename):
             db.session.add(o)
             authors[a] = o
     db.session.commit()
-    
     
     for b in books:
         a = authors[b["author"]]
@@ -37,17 +37,21 @@ def loaddb(filename):
     db.session.commit()
     
 @app.cli.command()
-def syncdb():
-    '''
-        Create all missing tables
-    '''
+def syncdb() -> None:
+    """ 
+    Permet de créer les différentes table de la base de donnée
+    """
     db.create_all()
     
 @app.cli.command()
 @click.argument('username')
 @click.argument('password')
 def newuser(username, password):
-    """New user"""
+    """ Enregistre dans la base un nouvel utilisateur associé à un mot de passe
+    Args:
+        username (str): le nom de l'utilisateur
+        password (str): le mot de passe de l'utilisateur
+    """
     from .models import User
     from hashlib import sha256
     m = sha256()
