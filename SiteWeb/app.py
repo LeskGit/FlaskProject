@@ -24,7 +24,7 @@ def mkpath (p) -> None:
             p))
     
 # Chargement de la base de données
-app.config['SQLALCHEMY_DATABASE_URI'] = ('sqlite:///'+mkpath('../FlaskProject.db'))
+app.config['SQLALCHEMY_DATABASE_URI'] = ('sqlite:///'+mkpath('../ServWeb.db'))
 db = SQLAlchemy(app)
 
 # Configuration d'une clé secrète (pour les sessions utilisateurs)
