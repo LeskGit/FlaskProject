@@ -34,14 +34,15 @@ class AuthorForm(FlaskForm):
 def home():
     return render_template(
         "home.html",
-        title="Hello World")
+        title="Livre à l'affiche !",
+        books=get_sample())
     
     
 @app.route ("/sample")
 def sample():
     return render_template(
         "home.html",
-        title="My Books !",
+        title="Livre à l'affiche !",
         books=get_sample())
     
     
@@ -70,7 +71,7 @@ def save_author():
             a = get_author(id)
             a.name = f.name.data
             db.session.commit()
-            return redirect(url_for('sample', id=a.id))
+            return redirect(url_for('detail', id=a.id))
         a = get_author(int(f.id.data))
         return render_template(
             "edit-author.html",

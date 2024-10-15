@@ -30,7 +30,7 @@ class Book(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     price = db.Column(db.Float)
     url = db.Column(db.String(200))
-    image = db.Column(db.String(200))
+    img = db.Column(db.String(200))
     title = db.Column(db.String(100))
     author_id = db.Column(db.Integer, db.ForeignKey("author.id"))
     author = db.relationship("Author", backref=db.backref("books", lazy="dynamic"))
@@ -39,7 +39,7 @@ class Book(db.Model):
     
 
 def get_sample():
-    return Book.query.limit(10).all() 
+    return Book.query.all() 
 
 
 def get_author(id):
