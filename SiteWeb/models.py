@@ -53,12 +53,14 @@ class Book(db.Model):
     
 
 def get_sample() -> list[Book]:
-    """ retourne un échantillon de 10 livres
+
+    """ retourne tous les livres
+
 
     Returns:
         List[Book]: une liste de livres
     """
-    return Book.query.limit(10).all() 
+    return Book.query.all() 
 
 
 

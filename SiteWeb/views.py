@@ -1,7 +1,7 @@
 from SiteWeb.command import newuser
 from .app import app
 from flask import render_template
-from .models import get_sample, get_author
+from .models import get_sample, get_author, Author, Book
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField
 from wtforms.validators import DataRequired, EqualTo
@@ -46,18 +46,10 @@ def home():
         books=get_sample())
     
     
-@app.route ("/sample")
-def sample():
-    return render_template(
-        "home.html",
-        title="Livre à l'affiche !",
-        books=get_sample())
-    
-    
 @app.route("/detail/<id>")
 def detail(id):
     books = get_sample()
-    book = books[int(id)]
+    book = books[int(id)-1]
     return render_template(
     "detail.html",
     b=book)
@@ -69,6 +61,14 @@ def edit_author(id):
     return render_template(
         "edit-author.html",
         author=a, form = f)
+    
+@app.route("/add-author/")
+def ajout_author():
+    f = AuthorForm()  # Crée une instance du formulaire pour l'ajout
+    return render_template(
+        "add-author.html",
+        form=f
+    )
     
 @app.route("/save/author/", methods =("POST" ,))
 def save_author():
@@ -84,6 +84,18 @@ def save_author():
         return render_template(
             "edit-author.html",
             author =a, form=f)
+        
+@app.route("/add/author/", methods=("POST",))
+def add_author():
+    f = AuthorForm()  # Crée une instance du formulaire à partir des données envoyées
+    if f.validate_on_submit():
+        # Création d'un nouvel auteur sans fournir d'ID, la base de données le générera
+        nameA = f.name.data
+        author = Author(name=nameA)
+        db.session.add(author)  # Ajoute l'auteur à la session de la base de données
+        db.session.commit()  # Sauvegarde les modifications dans la base de données
+        return redirect(url_for('home'))  # Redirige vers la page de détails de l'auteur
+    return render_template("add-author.html", form=f) 
         
 @app.route("/login/",methods=("GET","POST" ,))
 def login():

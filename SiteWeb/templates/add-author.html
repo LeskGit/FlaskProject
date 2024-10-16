@@ -2,24 +2,29 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Edit author: {{ author.name }}</h1>
-    <form role="form" method="POST" action="{{ url_for('save_author') }}" class="mx-auto" style="max-width: 600px;">
+    <h1 class="text-center mb-4">Add author : </h1>
+    <form role="form" method="POST" action="{{ url_for('add_author') }}" class="mx-auto" style="max-width: 600px;">
         {{ form.hidden_tag() }}
 
-        <div class = {% if form.name.errors %}
-            "form-group has-error" 
+        <div class="
+            {% if form.name.errors %}
+                form-group has-error
             {% else %}
-            "form-group"
+                form-group
             {% endif %}
-            >
-            {{ form.name.label }} {{ form.name(size=50,class_="form-control") }}
+        ">
+            {{ form.name.label }} 
+            {{ form.name(size=50, class_="form-control") }}
         </div>
+
         {% if form.name.errors %}
         <ul class="list-group">
             {% for e in form.name.errors %}
             <li class="list-group-item list-group-item-danger">{{ e }}</li>
             {% endfor %}
+        </ul>
         {% endif %}
+
         <div class="d-flex justify-content-end">
             <input class="btn btn-primary mb-2" type="submit" value="Enregistrer">
         </div>
