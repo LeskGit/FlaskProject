@@ -74,6 +74,7 @@ def ajout_author():
 def save_author():
     f = AuthorForm()
     if f.validate_on_submit():
+        print(f.id.data)
         id = int(f.id.data)
         a = get_author(id)
         
@@ -82,12 +83,10 @@ def save_author():
         
         print(f.data)
         if request.form.get('value') == 'Enregistrer':
-            print("aaaaaaaaaaaaaaaaaaaaaa")
             a.name = f.name.data
             db.session.commit()
         
         elif request.form.get('value') == 'Supprimer':
-            print("fhfhf")
             db.session.delete(a)
             db.session.commit()
             return redirect(url_for('home'))  

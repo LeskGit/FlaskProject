@@ -6,7 +6,7 @@ import os.path
 
 # Initialisation de Flask et Bootstrap
 app = Flask(__name__)
-app. config['BOOTSTRAP_SERVE_LOCAL'] = True
+app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 bootstrap = Bootstrap5(app)
 
 # Initialisation de l'authentification des utilisateurs
