@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+{% endblock %}
+{% block content %}
+<form class="form-horizontal" role="form" method="POST" action="{{ url_for('register') }}">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        <label for="username" class="col-sm-2 control-label">{{ form.username.label }}</label>
+        <div class="col-sm-10">
+            {{ form.username(size=50, class_="form-control", placeholder="Username") }}
+            {% if form.username.errors %}
+                <div class="text-danger">{{ form.username.errors[0] }}</div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="password" class="col-sm-2 control-label">{{ form.password.label }}</label>
+        <div class="col-sm-10">
+            {{ form.password(size=50, class_="form-control", placeholder="Password") }}
+            {% if form.password.errors %}
+                <div class="text-danger">{{ form.password.errors[0] }}</div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="confirm_password" class="col-sm-2 control-label">{{ form.confirm_password.label }}</label>
+        <div class="col-sm-10">
+            {{ form.confirm_password(size=50, class_="form-control", placeholder="Confirm Password") }}
+            {% if form.confirm_password.errors %}
+                <div class="text-danger">{{ form.confirm_password.errors[0] }}</div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            {{ form.submit(class_="btn btn-default") }}
+        </div>
+    </div>
+</form>
+{% endblock %}
