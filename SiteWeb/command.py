@@ -42,7 +42,7 @@ def syncdb() -> None:
     Permet de créer les différentes table de la base de donnée
     """
     db.create_all()
-    
+
 @app.cli.command()
 @click.argument('username')
 @click.argument('password')

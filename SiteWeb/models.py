@@ -53,7 +53,9 @@ class Book(db.Model):
     
 
 def get_sample() -> list[Book]:
+
     """ retourne tous les livres
+
 
     Returns:
         List[Book]: une liste de livres

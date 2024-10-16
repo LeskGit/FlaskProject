@@ -24,7 +24,9 @@ Vous êtes maintenant prêt à lancer l'application.
 
 - Lancez votre virtualenv.
 - Déplacez-vous dans le dossier `FlaskProject`.
-- Utilisez la commande **FLASK_APP=SiteWeb/app.py flask run***.
+- Utilisez la commande **flask loaddb SiteWeb/data/data.yml**
+- Utilisez la commande **flask syncdb**
+- Utilisez la commande **FLASK_APP=SiteWeb/app.py flask run**.
 Vous n'aurez besoin d'utiliser cette commande qu'une seule fois. Si vous souhaitez relancer l'application, utilisez simplement **flask run**.
 
 ### Fonctionnalités ajoutées :
