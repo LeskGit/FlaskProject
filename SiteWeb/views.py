@@ -70,20 +70,33 @@ def ajout_author():
         form=f
     )
     
-@app.route("/save/author/", methods =("POST" ,))
+@app.route("/save/author/", methods=("POST",))
 def save_author():
-        a = None
-        f = AuthorForm()
-        if f.validate_on_submit():
-            id = int(f.id.data)
-            a = get_author(id)
+    f = AuthorForm()
+    if f.validate_on_submit():
+        id = int(f.id.data)
+        a = get_author(id)
+        
+        if not a:
+            return "Veuillez renseignez des champs corrects."
+        
+        print(f.data)
+        if request.form.get('value') == 'Enregistrer':
+            print("aaaaaaaaaaaaaaaaaaaaaa")
             a.name = f.name.data
             db.session.commit()
-            return redirect(url_for('detail', id=a.id))
-        a = get_author(int(f.id.data))
-        return render_template(
-            "edit-author.html",
-            author =a, form=f)
+        
+        elif request.form.get('value') == 'Supprimer':
+            print("fhfhf")
+            db.session.delete(a)
+            db.session.commit()
+            return redirect(url_for('home'))  
+        
+        return redirect(url_for('detail', id=a.id))
+
+    a = get_author(int(f.id.data)) if f.id.data else None
+    return render_template("edit-author.html", author=a, form=f)
+
         
 @app.route("/add/author/", methods=("POST",))
 def add_author():
