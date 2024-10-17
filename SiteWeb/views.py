@@ -145,6 +145,40 @@ def show_authors():
     authors = Author.query.all()
     return render_template("authors.html", authors=authors)
 
+@app.route('/search', methods=['GET'])
+def search():
+    query = request.args.get('query')
+
+    # Récupérer tous les auteurs correspondant à la requête
+    authors = Author.query.filter(Author.name.ilike(f'%{query}%')).all()
+
+    # Récupérer tous les livres correspondant à la requête
+    books = Book.query.filter(Book.title.ilike(f'%{query}%')).all()
+
+    if not authors:
+        matching_authors = []
+    else:
+        # Regrouper les auteurs par nom
+        grouped_authors = {}
+        for author in authors:
+            if author.name not in grouped_authors:
+                grouped_authors[author.name] = []
+            grouped_authors[author.name].append(author)
+
+        # Déterminer l'auteur à afficher
+        matching_authors = []
+        for author_group in grouped_authors.values():
+            if len(author_group) > 1:
+                # Plus d'un auteur avec le même nom : choisir celui avec le plus de livres
+                author_with_most_books = max(author_group, key=lambda a: a.books.count())
+                matching_authors.append(author_with_most_books)
+            else:
+                # Un seul auteur avec ce nom
+                matching_authors.append(author_group[0])
+
+    return render_template('search.html', authors=matching_authors, books=books, query=query)
+
+
 @app.route("/logout/")
 def logout():
     logout_user()
