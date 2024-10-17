@@ -58,9 +58,11 @@ def detail(id):
 def edit_author(id):
     a = get_author(id)
     f = AuthorForm(id=a.id, name=a.name)
+    books = a.books.all()
     return render_template(
         "edit-author.html",
-        author=a, form = f)
+        author=a, form=f, books=books
+    )
     
 @app.route("/add-author/")
 def ajout_author():
@@ -126,6 +128,10 @@ def register():
         return redirect(url_for("login"))
     return render_template("register.html", form=form)
 
+@app.route("/authors/")
+def show_authors():
+    authors = Author.query.all()
+    return render_template("authors.html", authors=authors)
 
 @app.route("/logout/")
 def logout():

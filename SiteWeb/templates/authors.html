@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+{% endblock %}
+{% block content %}
+<h2>Liste des Auteurs</h2>
+<div class="mb-3">
+    <a href="/add-author/" class="btn btn-primary">Ajouter un Auteur</a>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nom</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for author in authors %}
+        <tr>
+            <td>{{ author.id }}</td>
+            <td> <a href="{{ url_for('edit_author', id=author.id) }}">{{ author.name }} </a></td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="2">Aucun auteur trouvé.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
