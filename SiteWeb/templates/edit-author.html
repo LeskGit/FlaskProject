@@ -2,12 +2,29 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Edit author: </h1>
+    <h1 class="text-center mb-4…s par auteur">Edit author: {{ author.name }}</h1>
+
+    <!-- Affichage des livres -->
+    <div class="text-center mb-4">
+        {% for book in books %}
+        <div class="d-inline-block mx-2">  <!-- Utilisation d'un bloc en ligne pour centrer les images -->
+            <a href="{{ book.url }}" target="_blank">
+                <img src="{{ url_for('static', filename='images/' + book.img) }}" 
+                     alt="{{ book.title }}" title="{{ book.title }}" 
+                     style="height: 200px; object-fit: cover;">
+            </a>
+            <div>{{ book.title }}</div> <!-- Ajout du titre du livre sous l'image -->
+        </div>
+        {% else %}
+        <p>Aucun livre trouvé pour cet auteur.</p>
+        {% endfor %}
+    </div>
+
     <form role="form" method="POST" action="{{ url_for('save_author') }}" class="mx-auto" style="max-width: 600px;">
         {{ form.hidden_tag() }}
 
-        <div class="form-group {% if form.name.errors %} has-error {% endif %}">
-            {{ form.name.label }} 
+        <div class="{% if form.name.errors %}form-group has-error{% else %}form-group{% endif %}">
+            {{ form.name.label }}
             {{ form.name(size=50, class_="form-control") }}
         </div>
 
