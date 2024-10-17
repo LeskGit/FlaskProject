@@ -91,7 +91,7 @@ def save_author():
             db.session.commit()
             return redirect(url_for('home'))  
         
-        return redirect(url_for('detail', id=a.id))
+        return redirect(url_for('home'))
 
     a = get_author(int(f.id.data)) if f.id.data else None
     return render_template("edit-author.html", author=a, form=f)
