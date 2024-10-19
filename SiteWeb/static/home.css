@@ -26,3 +26,7 @@ margin-left: 2%;
     text-align: center;
     margin: auto;
 }
+
+#submit_import {
+    margin-bottom: 10rem;
+}

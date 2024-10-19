@@ -23,6 +23,8 @@ def mkpath (p) -> None:
             os.path.dirname( __file__ ),
             p))
 
+UPLOAD_FOLDER = 'path/to/upload/directory'  # Remplacez par le chemin de votre dossier
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 app.config['SQLALCHEMY_DATABASE_URI'] = ('sqlite:///'+mkpath('../SiteWeb.db'))
 
