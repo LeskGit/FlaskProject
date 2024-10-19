@@ -28,13 +28,15 @@ def loaddb(filename : str) -> None:
     
     for b in books:
         a = authors[b["author"]]
-        o = Book(price = b["price"],
-                title = b["title"],
-                url = b["url"] ,
-                img = b["img"] ,
-                author_id = a.id)
-        db.session.add(o)
+        if not Book.query.filter_by(title=b["title"], author_id=a.id).first():
+            o = Book(price = b["price"],
+                    title = b["title"],
+                    url = b["url"] ,
+                    img = b["img"] ,
+                    author_id = a.id)
+            db.session.add(o)
     db.session.commit()
+    
     
 @app.cli.command()
 def syncdb() -> None:
