@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Mes Favoris</h1>
+
+{% if books %}
+    <ul>
+        {% for book in books %}
+            <li>
+                <a href="{{ url_for('detail', id=book.id) }}">{{ book.title }}</a> par {{ book.author.name }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Vous n'avez aucun livre dans vos favoris.</p>
+{% endif %}
+{% endblock %}

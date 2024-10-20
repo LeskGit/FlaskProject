@@ -7,15 +7,18 @@ from .app import login_manager
 def load_user(username):
     return User.query.get(username)
 
+favorites = db.Table('favorites',
+    db.Column('user_id', db.String(50), db.ForeignKey('user.username'), primary_key=True),
+    db.Column('book_id', db.Integer, db.ForeignKey('book.id'), primary_key=True)
+)
 
 class User(db.Model, UserMixin):
     username = db.Column(db.String(50), primary_key=True)
     password = db.Column(db.String(64))
+    favorites = db.relationship('Book', secondary='favorites', backref='favorited_by')
     
     def get_id(self):
         return self.username
-    
-
 
 class Author(db.Model):
     """
