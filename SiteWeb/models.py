@@ -137,4 +137,8 @@ def loadbook(file) -> None:
         db.session.commit()
     
     except Exception as e:
-        print(f"Erreur lors de l'import du livre dans la BD: {e}") 
+        print(f"Erreur lors de l'import du livre dans la BD: {e}")
+
+def get_books_by_author(author_id):
+    return Book.query.filter_by(author_id=author_id).all()
+

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Recherche Avancée</h1>
+    <form method="post" action="{{ url_for('advanced_search') }}">
+        <input type="text" name="search_query" placeholder="Mot-clé">
+        <select name="author_id">
+            <option value="">Sélectionnez un auteur</option>
+            {% for author in authors %}
+                <option value="{{ author.id }}">{{ author.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="number" name="price_min" placeholder="Prix minimum">
+        <input type="number" name="price_max" placeholder="Prix maximum">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    {% if results %}
+        <h2>Résultats</h2>
+        <ul>
+            {% for book, author in results %}
+                <li>
+                    <a href="{{ url_for('detail', id=book.id) }}">{{ book.title }}</a> par
+                    <a href="{{ url_for('edit_author', id=author.id) }}">{{ author.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun résultat trouvé.</p>
+    {% endif %}
+{% endblock %}

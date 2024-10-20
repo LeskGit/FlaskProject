@@ -33,16 +33,16 @@
                 <a class="nav-link" href="#">Lien</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/authors/">Auteurs</a>
+                <a class="nav-link" href="/authors">Auteurs</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/advanced-search">Avancée</a>
               </li>
             </ul>
-            
-          
-              
-            <form class="d-flex" role="search">
-              <input class="form-control me-2" type="search" placeholder="Recherche" aria-label="Search">
+            <form class="d-flex" role="search" action="{{ url_for('search') }}" method="get">
+              <input class="form-control me-2" type="search" name="query" placeholder="Recherche" aria-label="Search">
               <button class="btn btn-outline-success" type="submit">Recherche</button>
-            </form>
+            </form>            
             <ul id="userlog" class="nav navbar-nav navbar-right">
               {% if current_user.is_authenticated %}
                   <li><a>{{ current_user.username }}</a></li>

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-center mb-4">Résultats de la recherche pour "{{ query }}"</h1>
+
+<div class="mb-4">
+    <h2>Auteurs trouvés :</h2>
+    {% if authors %}
+    <ul>
+        {% for author in authors %}
+        <li><a href="{{ url_for('edit_author', id=author.id) }}">{{ author.name }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Aucun auteur trouvé.</p>
+    {% endif %}
+</div>
+
+<div>
+    <h2>Livres trouvés :</h2>
+    {% if books %}
+    <ul>
+        {% for book in books %}
+        <li><a href="{{ url_for('detail', id=book.id) }}" target="_blank">{{ book.title }}</a></li> 
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Aucun livre trouvé.</p>
+    {% endif %}
+</div>
+{% endblock %}
