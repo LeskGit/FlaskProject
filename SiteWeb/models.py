@@ -40,7 +40,7 @@ class Book(db.Model):
     img = db.Column(db.String(200))
     title = db.Column(db.String(100))
     author_id = db.Column(db.Integer, db.ForeignKey("author.id"))
-    genre_id = db.Column(db.Integer, db.ForeignKey("genre.id"))  # Clé étrangère vers Genre
+    genre_id = db.Column(db.String(100), db.ForeignKey("genre.name"), default="Aucun") 
     author = db.relationship("Author", backref=db.backref("books", lazy="dynamic"))
     genre = db.relationship("Genre", backref=db.backref("books", lazy="dynamic"))
 
@@ -60,11 +60,13 @@ class Genre(db.Model):
     
     
     def __repr__ (self ):
-        """ Permet de gérer l'affichage d'un livre
+        """ Permet de gérer l'affichage d'un genre
         Returns:
-            str: l'id et le titre du livre
+            str: le nom du genre
         """
-        return "<Genre (%d) %s>" % (self.name)
+        return self.name
+    
+
     
 
 def get_sample() -> list[Book]:
