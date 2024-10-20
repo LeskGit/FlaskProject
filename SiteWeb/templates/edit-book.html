@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Edit livre: </h1>
+    <form role="form" method="POST" action="{{ url_for('save_book') }}" class="mx-auto" style="max-width: 600px;">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group {% if form.title.errors %} has-error {% endif %}">
+            {{ form.title.label }} 
+            {{ form.title(size=50, class_="form-control") }}
+        </div>
+
+        {% if form.title.errors %}
+        <ul class="list-group">
+            {% for e in form.title.errors %}
+            <li class="list-group-item list-group-item-danger">{{ e }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-danger mr-2" name="value" value="Supprimer" type="submit">Supprimer</button>
+            <button class="btn btn-primary" name="value" value="Enregistrer" type="submit">Enregistrer</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

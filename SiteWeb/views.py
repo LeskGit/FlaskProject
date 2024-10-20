@@ -1,7 +1,7 @@
 from SiteWeb.command import newuser
 from .app import app
 from flask import render_template
-from .models import get_sample, get_author, Author, Book
+from .models import get_sample, get_author, get_book, loadbook, Author, Book
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField
 from wtforms.validators import DataRequired, EqualTo
@@ -13,6 +13,8 @@ from hashlib import sha256
 from flask_login import login_user, current_user
 from flask import request
 from flask_login import logout_user
+from .command import loaddb
+from wtforms import FileField, SubmitField
 
 class loginForm(FlaskForm):
     username = StringField('Username')
@@ -30,6 +32,13 @@ class loginForm(FlaskForm):
 class AuthorForm(FlaskForm):
     id = HiddenField('id')
     name = StringField('Nom', validators=[DataRequired()])
+    
+class BookForm(FlaskForm):
+    id = HiddenField('id')
+    title = StringField('Nom', validators=[DataRequired()])
+    
+class BookFormImport(FlaskForm):
+    livre = FileField('livre', validators=[DataRequired()])
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -40,10 +49,12 @@ class RegistrationForm(FlaskForm):
 
 @app.route ("/")
 def home():
+    f = BookFormImport()
     return render_template(
         "home.html",
         title="Livre à l'affiche !",
-        books=get_sample())
+        books=get_sample(),
+        form=f)
     
     
 @app.route("/detail/<id>")
@@ -58,11 +69,17 @@ def detail(id):
 def edit_author(id):
     a = get_author(id)
     f = AuthorForm(id=a.id, name=a.name)
-    books = a.books.all()
     return render_template(
         "edit-author.html",
-        author=a, form=f, books=books
-    )
+        author=a, form = f)
+
+@app.route("/edit-book/<int:id>")
+def edit_book(id):
+    a = get_book(id)
+    f = BookForm(id=a.id, title=a.title)
+    return render_template(
+        "edit-book.html",
+        book=a, form = f)
     
 @app.route("/add-author/")
 def ajout_author():
@@ -98,6 +115,31 @@ def save_author():
     a = get_author(int(f.id.data)) if f.id.data else None
     return render_template("edit-author.html", author=a, form=f)
 
+@app.route("/save/book/", methods=("POST",))
+def save_book():
+    f = BookForm()
+    if f.validate_on_submit():
+        id = int(f.id.data)
+        b = get_book(id)
+        
+        if not b:
+            return "Veuillez renseignez des champs corrects."
+        
+        print(f.data)
+        if request.form.get('value') == 'Enregistrer':
+            b.title = f.title.data
+            db.session.commit()
+        
+        elif request.form.get('value') == 'Supprimer':
+            db.session.delete(b)
+            db.session.commit()
+            return redirect(url_for('home'))  
+        
+        return redirect(url_for('home'))
+
+    b = get_book(int(f.id.data)) if f.id.data else None
+    return render_template("edit-book.html", book=b, form=f)
+
         
 @app.route("/add/author/", methods=("POST",))
 def add_author():
@@ -110,6 +152,15 @@ def add_author():
         db.session.commit()  # Sauvegarde les modifications dans la base de données
         return redirect(url_for('home'))  # Redirige vers la page de détails de l'auteur
     return render_template("add-author.html", form=f) 
+
+@app.route("/add/book/", methods=("POST",))
+def add_book():
+    f = BookFormImport()  # Crée une instance du formulaire à partir des données envoyées
+    if f.validate_on_submit():
+        book = f.livre.data
+        loadbook(book)
+        return redirect(url_for('home'))  # Redirige vers la page de détails de l'auteur
+    return render_template("add-book.html", form=f) 
         
 @app.route("/login/",methods=("GET","POST" ,))
 def login():
@@ -140,10 +191,6 @@ def register():
         return redirect(url_for("login"))
     return render_template("register.html", form=form)
 
-@app.route("/authors/")
-def show_authors():
-    authors = Author.query.all()
-    return render_template("authors.html", authors=authors)
 
 @app.route('/search', methods=['GET'])
 def search():
