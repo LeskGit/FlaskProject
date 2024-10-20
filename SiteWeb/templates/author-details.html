@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Auteur : {{ author.name }}</h1>
+
+    <!-- Affichage des livres -->
+    <div class="text-center mb-4">
+        {% if books %}
+            {% for book in books %}
+            <div class="d-inline-block mx-2">
+                <a href="{{ book.url }}" target="_blank">
+                    <img src="{{ url_for('static', filename='images/' + book.img) }}" 
+                         alt="{{ book.title }}" title="{{ book.title }}" 
+                         style="height: 200px; object-fit: cover;">
+                </a>
+                <div>{{ book.title }}</div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>Aucun livre trouvé pour cet auteur.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

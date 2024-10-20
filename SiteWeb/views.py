@@ -10,12 +10,13 @@ from .app import db
 from wtforms import PasswordField, SubmitField
 from .models import User
 from hashlib import sha256
-from flask_login import login_user, current_user
+from flask_login import login_user, current_user, login_required
 from flask import request
 from flask_login import logout_user
 from .command import loaddb
 from wtforms import FileField, SubmitField
 from sqlalchemy import or_
+
 
 class loginForm(FlaskForm):
     username = StringField('Username')
@@ -66,15 +67,16 @@ def detail(id):
     b=book)
     
 @app.route("/edit-author/<int:id>")
+@login_required
 def edit_author(id):
-    a = get_author(id)  # Récupération de l'auteur
-    books = get_books_by_author(id) 
+    a = get_author(id)
+    books = get_books_by_author(id)
     f = AuthorForm(id=a.id, name=a.name)
     return render_template(
         "edit-author.html",
         author=a,
         form=f,
-        books=books  # Passer la liste des livres au template
+        books=books
     )
     
 @app.route("/add-author/")
@@ -263,6 +265,12 @@ def advanced_search():
 def show_authors():
     authors = Author.query.all()  # Récupérer tous les auteurs de la base de données
     return render_template('authors.html', authors=authors)
+
+@app.route("/author_detail/<int:id>")
+def author_details(id):
+    a = get_author(id)  # Récupère l'auteur par son ID
+    books = get_books_by_author(id)  # Récupère les livres de l'auteur
+    return render_template("author-details.html", author=a, books=books)
 
 @app.route("/logout/")
 def logout():
