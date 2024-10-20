@@ -1,7 +1,7 @@
 from SiteWeb.command import newuser
 from .app import app
 from flask import render_template
-from .models import get_books_by_author, get_sample, get_author, get_book, loadbook, Author, Book
+from .models import get_sample, get_author, get_book, loadbook, Author, Book, Genre
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField
 from wtforms.validators import DataRequired, EqualTo
@@ -38,6 +38,7 @@ class AuthorForm(FlaskForm):
 class BookForm(FlaskForm):
     id = HiddenField('id')
     title = StringField('Nom', validators=[DataRequired()])
+    genre = StringField('Type', validators=[DataRequired()])
     
 class BookFormImport(FlaskForm):
     livre = FileField('livre', validators=[DataRequired()])
@@ -74,10 +75,15 @@ def edit_author(id):
     f = AuthorForm(id=a.id, name=a.name)
     return render_template(
         "edit-author.html",
-        author=a,
-        form=f,
-        books=books
-    )
+        author=a, form = f)
+
+@app.route("/edit-book/<int:id>")
+def edit_book(id):
+    a = get_book(id)
+    f = BookForm(id=a.id, title=a.title, genre = a.genre)
+    return render_template(
+        "edit-book.html",
+        book=a, form = f)
     
 @app.route("/add-author/")
 def ajout_author():
@@ -125,6 +131,11 @@ def save_book():
         
         print(f.data)
         if request.form.get('value') == 'Enregistrer':
+            genre_obj = Genre.query.filter_by(name=f.genre.data).first()
+            if genre_obj is None:
+                genre_obj = Genre(name=f.genre.data)
+                db.session.add(genre_obj)
+            b.genre = genre_obj
             b.title = f.title.data
             db.session.commit()
         

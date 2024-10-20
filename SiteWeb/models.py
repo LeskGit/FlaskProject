@@ -32,17 +32,18 @@ class Author(db.Model):
         """
         return "<Author (%d) %s>" % (self.id , self.name)
     
+    
 class Book(db.Model):
-    """
-    Représente un livre dans la base de données
-    """
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Float)
     url = db.Column(db.String(200))
     img = db.Column(db.String(200))
     title = db.Column(db.String(100))
     author_id = db.Column(db.Integer, db.ForeignKey("author.id"))
+    genre_id = db.Column(db.String(100), db.ForeignKey("genre.name"), default="Aucun") 
     author = db.relationship("Author", backref=db.backref("books", lazy="dynamic"))
+    genre = db.relationship("Genre", backref=db.backref("books", lazy="dynamic"))
+
     
     def __repr__ (self ):
         """ Permet de gérer l'affichage d'un livre
@@ -50,6 +51,22 @@ class Book(db.Model):
             str: l'id et le titre du livre
         """
         return "<Book (%d) %s>" % (self.id , self.title)
+    
+class Genre(db.Model):
+    """
+    Représente un livre dans la base de données
+    """
+    name = db.Column(db.String(200), primary_key = True)
+    
+    
+    def __repr__ (self ):
+        """ Permet de gérer l'affichage d'un genre
+        Returns:
+            str: le nom du genre
+        """
+        return self.name
+    
+
     
 
 def get_sample() -> list[Book]:

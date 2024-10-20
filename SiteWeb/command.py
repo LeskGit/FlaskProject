@@ -3,10 +3,9 @@ from .app import app, db
 
 @app.cli.command()
 @click.argument('filename')
-
-def loaddb(filename : str) -> None:
+def loaddb(filename: str) -> None:
     """ Permet de charger des données dans les tables 
-        authors et books à d'un fichier YAML
+        authors et books à partir d'un fichier YAML.
     Args:
         filename (str): le chemin du fichier YAML
     """
@@ -15,9 +14,19 @@ def loaddb(filename : str) -> None:
     import yaml
     books = yaml.safe_load(open(filename))
     
-    from .models import Author, Book
+    from .models import Author, Book, Genre
     
     authors = {}
+    genres = {}
+
+    # Ajouter le genre par défaut (si nécessaire)
+    default_genre = Genre.query.filter_by(name="Aucun").first()
+    if not default_genre:
+        default_genre = Genre(name="Aucun")
+        db.session.add(default_genre)
+        db.session.commit()
+    
+    # Gérer les auteurs
     for b in books:
         a = b["author"]
         if a not in authors:
@@ -26,17 +35,29 @@ def loaddb(filename : str) -> None:
             authors[a] = o
     db.session.commit()
     
+    # Gérer les livres et genres
     for b in books:
         a = authors[b["author"]]
-        if not Book.query.filter_by(title=b["title"], author_id=a.id).first():
-            o = Book(price = b["price"],
-                    title = b["title"],
-                    url = b["url"] ,
-                    img = b["img"] ,
-                    author_id = a.id)
+        g_name = b.get("genre", "Aucun")  # Utiliser le genre par défaut si manquant
+        if g_name not in genres:
+            g = Genre.query.filter_by(name=g_name).first()
+            if not g:
+                g = Genre(name=g_name)
+                db.session.add(g)
+            genres[g_name] = g
+        g = genres[g_name]
+        
+        # Vérifier si le livre existe déjà
+        if not Book.query.filter_by(title=b["title"], author_id=a.id, genre_id=g.name).first():
+            o = Book(price=b["price"],
+                     title=b["title"],
+                     url=b["url"],
+                     img=b["img"],
+                     author_id=a.id,
+                     genre_id=g.name)
             db.session.add(o)
     db.session.commit()
-    
+
     
 @app.cli.command()
 def syncdb() -> None:
