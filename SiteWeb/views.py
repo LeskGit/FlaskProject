@@ -1,7 +1,7 @@
 from SiteWeb.command import newuser
 from .app import app
 from flask import render_template
-from .models import get_books_by_author, get_sample, get_author, get_book, loadbook, Author, Book
+from .models import get_sample, get_author, get_book, loadbook, Author, Book, Genre, get_books_by_author, get_all_author
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField
 from wtforms.validators import DataRequired, EqualTo
@@ -38,6 +38,7 @@ class AuthorForm(FlaskForm):
 class BookForm(FlaskForm):
     id = HiddenField('id')
     title = StringField('Nom', validators=[DataRequired()])
+    genre = StringField('Type', validators=[DataRequired()])
     
 class BookFormImport(FlaskForm):
     livre = FileField('livre', validators=[DataRequired()])
@@ -52,11 +53,31 @@ class RegistrationForm(FlaskForm):
 @app.route ("/")
 def home():
     f = BookFormImport()
+    # Nombre de livres par page
+    page_lim = 30
+    # Récupérer le numéro de page à partir de l'URL, par défaut à 1 pour eviter les erreurs
+    page = request.args.get('page', 1, type=int)
+    
+    # Calculer l'offset pour la requête
+    offset = (page - 1) * page_lim
+    
+    # Récupérer les livres pour la page actuelle
+    books = Book.query.limit(page_lim).offset(offset).all()
+    
+    # Compter le nombre total de livres
+    total_books = Book.query.count()
+    
+    # Calculer le nombre total de pages
+    total_pages = (total_books + page_lim - 1) // page_lim  # Arrondi vers le haut
+
+
     return render_template(
         "home.html",
         title="Livre à l'affiche !",
-        books=get_sample(),
-        form=f)
+        form=f,
+        books=books,
+        page=page,
+        total_pages=total_pages)
 
 @app.route("/detail/<id>")
 def detail(id):
@@ -74,10 +95,15 @@ def edit_author(id):
     f = AuthorForm(id=a.id, name=a.name)
     return render_template(
         "edit-author.html",
-        author=a,
-        form=f,
-        books=books
-    )
+        author=a, form = f)
+
+@app.route("/edit-book/<int:id>")
+def edit_book(id):
+    a = get_book(id)
+    f = BookForm(id=a.id, title=a.title, genre = a.genre)
+    return render_template(
+        "edit-book.html",
+        book=a, form = f)
     
 @app.route("/add-author/")
 def ajout_author():
@@ -125,6 +151,11 @@ def save_book():
         
         print(f.data)
         if request.form.get('value') == 'Enregistrer':
+            genre_obj = Genre.query.filter_by(name=f.genre.data).first()
+            if genre_obj is None:
+                genre_obj = Genre(name=f.genre.data)
+                db.session.add(genre_obj)
+            b.genre = genre_obj
             b.title = f.title.data
             db.session.commit()
         

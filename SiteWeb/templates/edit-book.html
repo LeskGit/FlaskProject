@@ -19,6 +19,19 @@
         </ul>
         {% endif %}
 
+        <div class="form-group {% if form.genre.errors %} has-error {% endif %}">
+            {{ form.genre.label }} 
+            {{ form.genre(size=50, class_="form-control") }}
+        </div>
+
+        {% if form.genre.errors %}
+        <ul class="list-group">
+            {% for e in form.genre.errors %}
+            <li class="list-group-item list-group-item-danger">{{ e }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
         <div class="d-flex justify-content-end">
             <button class="btn btn-danger mr-2" name="value" value="Supprimer" type="submit">Supprimer</button>
             <button class="btn btn-primary" name="value" value="Enregistrer" type="submit">Enregistrer</button>
