@@ -1,7 +1,7 @@
 from SiteWeb.command import newuser
 from .app import app
 from flask import render_template
-from .models import get_sample, get_author, get_book, loadbook, Author, Book, Genre
+from .models import get_sample, get_author, get_book, loadbook, Author, Book, Genre, get_books_by_author, get_all_author
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField
 from wtforms.validators import DataRequired, EqualTo
