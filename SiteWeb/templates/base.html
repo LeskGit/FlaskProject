@@ -16,7 +16,6 @@
   
   <body>
     <header>
-      <!-- navbar fixée -->
       <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">Bibliothèque</a>
@@ -30,31 +29,37 @@
                 <a class="nav-link active" aria-current="page" href="/">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Lien</a>
-              </li>
-              <li class="nav-item">
                 <a class="nav-link" href="/authors">Auteurs</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/advanced-search">Avancée</a>
               </li>
             </ul>
-            <form class="d-flex" role="search" action="{{ url_for('search') }}" method="get">
+            <form class="d-flex" role="search" action="/search" method="get">
               <input class="form-control me-2" type="search" name="query" placeholder="Recherche" aria-label="Search">
               <button class="btn btn-outline-success" type="submit">Recherche</button>
-            </form>            
-            <ul id="userlog" class="nav navbar-nav navbar-right">
+            </form>
+            <ul id="userlog" class="navbar-nav navbar-right">
               {% if current_user.is_authenticated %}
-                  <li><a>{{ current_user.username }}</a></li>
-                  <li><a href="{{ url_for('logout') }}">
-                      <span class="glyphicon glyphicon-log-out" title="Logout"></span>
-                  </a></li>
+                <li class="nav-item">
+                  <a class="nav-link">{{ current_user.username }}</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/logout/">Logout</a>
+                </li>
+              {% else %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/login/">Login</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/register/">Register</a>
+                </li>
               {% endif %}
-          </ul>
+            </ul>
           </div>
         </div>
       </nav>
-    </header>
+    </header>    
     
     <!-- Le contenue de la page actuelle -->
     <main class="flex-shrink-0">
