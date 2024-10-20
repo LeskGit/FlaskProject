@@ -77,7 +77,7 @@ def get_sample() -> list[Book]:
     Returns:
         List[Book]: une liste de livres
     """
-    return Book.query.all() 
+    return Book.query.limit(10).all() 
 
 def get_all_author() -> list[Book]:
 

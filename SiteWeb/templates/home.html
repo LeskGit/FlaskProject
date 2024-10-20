@@ -7,7 +7,6 @@
 
 {% block content %}
   <h1>{{ title }}</h1>
-  <h2> Voici les livres à l'affiche : </h2>
   <div class="sample">
     {% for x in books %}
       <a href="{{ url_for('detail', id=x.id) }}">
@@ -45,6 +44,19 @@
         <input id="submit_import" class="btn btn-primary" type="submit" value="Enregistrer">
     </div>
 </form>
+    <div class="pagination">
+      {% if page > 1 %}
+          <a href="{{ url_for('home', page=page-1) }}">Précédent</a>
+      {% endif %}
+
+      {% for p in range(1, total_pages + 1) %}
+          <a href="{{ url_for('home', page=p) }}">{{ p }}</a>
+      {% endfor %}
+
+      {% if page < total_pages %}
+          <a href="{{ url_for('home', page=page+1) }}">Suivant</a>
+      {% endif %}
+    </div>
 
 </div>
 {% endblock %}
