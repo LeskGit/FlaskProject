@@ -1,7 +1,7 @@
 from SiteWeb.command import newuser
 from .app import app
 from flask import render_template
-from .models import get_sample, get_author, get_book, loadbook, Author, Book
+from .models import get_books_by_author, get_sample, get_author, get_book, loadbook, Author, Book
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField
 from wtforms.validators import DataRequired, EqualTo
@@ -15,6 +15,7 @@ from flask import request
 from flask_login import logout_user
 from .command import loaddb
 from wtforms import FileField, SubmitField
+from sqlalchemy import or_
 
 class loginForm(FlaskForm):
     username = StringField('Username')
@@ -55,8 +56,7 @@ def home():
         title="Livre à l'affiche !",
         books=get_sample(),
         form=f)
-    
-    
+
 @app.route("/detail/<id>")
 def detail(id):
     books = get_sample()
@@ -67,19 +67,15 @@ def detail(id):
     
 @app.route("/edit-author/<int:id>")
 def edit_author(id):
-    a = get_author(id)
+    a = get_author(id)  # Récupération de l'auteur
+    books = get_books_by_author(id) 
     f = AuthorForm(id=a.id, name=a.name)
     return render_template(
         "edit-author.html",
-        author=a, form = f)
-
-@app.route("/edit-book/<int:id>")
-def edit_book(id):
-    a = get_book(id)
-    f = BookForm(id=a.id, title=a.title)
-    return render_template(
-        "edit-book.html",
-        book=a, form = f)
+        author=a,
+        form=f,
+        books=books  # Passer la liste des livres au template
+    )
     
 @app.route("/add-author/")
 def ajout_author():
@@ -225,6 +221,48 @@ def search():
 
     return render_template('search.html', authors=matching_authors, books=books, query=query)
 
+def perform_advanced_search(search_query, author_id, price_min, price_max):
+    # Base query
+    query = db.session.query(Book, Author).join(Author)
+    
+    # Filtrer par mot-clé
+    if search_query:
+        query = query.filter(or_(
+            Book.title.ilike(f'%{search_query}%'),
+            Author.name.ilike(f'%{search_query}%')
+        ))
+    
+    # Filtrer par auteur
+    if author_id:
+        query = query.filter(Book.author_id == author_id)
+    
+    # Filtrer par prix
+    if price_min:
+        query = query.filter(Book.price >= price_min)
+    if price_max:
+        query = query.filter(Book.price <= price_max)
+    
+    # Récupérer les résultats
+    results = query.all()
+    return results
+
+@app.route('/advanced-search', methods=['GET', 'POST'])
+def advanced_search():
+    authors = Author.query.all()  # Récupérer la liste des auteurs
+    results = None
+    if request.method == 'POST':
+        search_query = request.form.get('search_query')
+        author_id = request.form.get('author_id')
+        price_min = request.form.get('price_min')
+        price_max = request.form.get('price_max')
+        results = perform_advanced_search(search_query, author_id, price_min, price_max)
+    
+    return render_template('advanced-search.html', authors=authors, results=results)
+
+@app.route('/authors')
+def show_authors():
+    authors = Author.query.all()  # Récupérer tous les auteurs de la base de données
+    return render_template('authors.html', authors=authors)
 
 @app.route("/logout/")
 def logout():
