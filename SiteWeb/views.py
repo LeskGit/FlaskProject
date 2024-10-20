@@ -53,11 +53,31 @@ class RegistrationForm(FlaskForm):
 @app.route ("/")
 def home():
     f = BookFormImport()
+    # Nombre de livres par page
+    page_lim = 30
+    # Récupérer le numéro de page à partir de l'URL, par défaut à 1 pour eviter les erreurs
+    page = request.args.get('page', 1, type=int)
+    
+    # Calculer l'offset pour la requête
+    offset = (page - 1) * page_lim
+    
+    # Récupérer les livres pour la page actuelle
+    books = Book.query.limit(page_lim).offset(offset).all()
+    
+    # Compter le nombre total de livres
+    total_books = Book.query.count()
+    
+    # Calculer le nombre total de pages
+    total_pages = (total_books + page_lim - 1) // page_lim  # Arrondi vers le haut
+
+
     return render_template(
         "home.html",
         title="Livre à l'affiche !",
-        books=get_sample(),
-        form=f)
+        form=f,
+        books=books,
+        page=page,
+        total_pages=total_pages)
 
 @app.route("/detail/<id>")
 def detail(id):
