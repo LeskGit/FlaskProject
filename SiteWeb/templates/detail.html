@@ -7,40 +7,80 @@
 
 {% block content %}
 <div class="container mt-5">
+    <!-- Affichage du titre et de l'image du livre -->
     <div class="row">
         <div class="col-md-8 offset-md-2">
-            <h1 class="display-4 text-center mb-4">
-                {{ b.title }}
-            </h1>
-
+            <h1 class="display-4 text-center mb-4">{{ book.title }}</h1>
             <div class="text-center mb-4">
-                <img src="{{ url_for('static', filename='images/' + b.img) }}"
-                     alt="{{ b.title }}" 
-                     title="{{ b.title }}" 
+                <img src="{{ url_for('static', filename='images/' + book.img) }}"
+                     alt="{{ book.title }}" 
+                     title="{{ book.title }}" 
                      class="img-fluid rounded">
             </div>
-
             <div class="form-inline d-flex justify-content-center">
                 <ul class="list-unstyled">
-                    <li><strong>Auteur :</strong> {{ b.author.name }}</li>
-                    <li><strong>Genre:</strong> {{ b.genre.name }}</li> 
+                    <li><strong>Auteur :</strong> {{ book.author.name }}</li>
                 </ul>
             </div>
 
+            <!-- Affichage de la note moyenne -->
+            {% if average_rating %}
+                <p class="text-center">Note moyenne : {{ average_rating }} / 5</p>
+            {% else %}
+                <p class="text-center">Aucune note pour ce livre.</p>
+            {% endif %}
+
+            <!-- Bouton Favoris -->
             {% if current_user.is_authenticated %}
-                {% if b in current_user.favorites %}
-                    <form action="{{ url_for('remove_from_favorites', book_id=b.id) }}" method="post">
-                        <button type="submit" class="btn btn-danger">
-                            Retirer des Favoris
-                        </button>
+                {% if book in current_user.favorites %}
+                    <form action="{{ url_for('remove_from_favorites', book_id=book.id) }}" method="post">
+                        <button type="submit" class="btn btn-danger">Retirer des Favoris</button>
                     </form>
                 {% else %}
-                    <form action="{{ url_for('add_to_favorites', book_id=b.id) }}" method="post">
-                        <button type="submit" class="btn btn-primary">
-                            Ajouter aux Favoris
-                        </button>
+                    <form action="{{ url_for('add_to_favorites', book_id=book.id) }}" method="post">
+                        <button type="submit" class="btn btn-primary">Ajouter aux Favoris</button>
                     </form>
                 {% endif %}
+            {% endif %}
+
+            <!-- Formulaire pour ajouter un commentaire -->
+            <h3 class="mt-5">Ajouter un commentaire</h3>
+            {% if current_user.is_authenticated %}
+                <form method="post" action="">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.rating.label }}<br>
+                        {{ form.rating(class="form-control", min=1, max=5) }}
+                        {% for error in form.rating.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.content.label }}<br>
+                        {{ form.content(class="form-control") }}
+                        {% for error in form.content.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {{ form.submit(class="btn btn-success") }}
+                </form>
+            {% else %}
+                <p>Vous devez être <a href="{{ url_for('login') }}">connecté</a> pour laisser un commentaire.</p>
+            {% endif %}
+
+            <!-- Affichage des commentaires existants -->
+            <h3 class="mt-5">Commentaires</h3>
+            {% if reviews %}
+                {% for review in reviews %}
+                    <div class="mb-4">
+                        <strong>{{ review.user.username }}</strong> le {{ review.timestamp.strftime('%d/%m/%Y à %H:%M') }}
+                        <br>
+                        Note : {{ review.rating }} / 5
+                        <p>{{ review.content }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Aucun commentaire pour ce livre.</p>
             {% endif %}
         </div>
     </div>

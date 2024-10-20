@@ -1,3 +1,4 @@
+from datetime import datetime
 import yaml, os.path
 from .app import db
 from flask_login import UserMixin
@@ -161,4 +162,20 @@ def loadbook(file) -> None:
 
 def get_books_by_author(author_id):
     return Book.query.filter_by(author_id=author_id).all()
+
+class Review(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)  
+    rating = db.Column(db.Integer, nullable=False)  
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow) 
+
+    user_id = db.Column(db.String(50), db.ForeignKey('user.username'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
+
+    user = db.relationship('User', backref=db.backref('reviews', lazy='dynamic'))
+    book = db.relationship('Book', backref=db.backref('reviews', lazy='dynamic'))
+
+    def __repr__(self):
+        return f"<Review {self.id} by {self.user_id} on book {self.book_id}>"
+
 

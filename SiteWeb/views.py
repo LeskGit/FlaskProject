@@ -1,10 +1,10 @@
 from SiteWeb.command import newuser
 from .app import app
 from flask import render_template
-from .models import get_sample, get_author, get_book, loadbook, Author, Book, Genre, get_books_by_author, get_all_author
+from .models import Review, get_sample, get_author, get_book, loadbook, Author, Book, Genre, get_books_by_author, get_all_author
 from flask_wtf import FlaskForm
-from wtforms import StringField, HiddenField
-from wtforms.validators import DataRequired, EqualTo
+from wtforms import StringField, HiddenField, TextAreaField, IntegerField, SubmitField
+from wtforms.validators import DataRequired, EqualTo, NumberRange
 from flask import url_for, redirect
 from .app import db
 from wtforms import PasswordField, SubmitField
@@ -50,6 +50,11 @@ class RegistrationForm(FlaskForm):
                                       validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Sign Up')
 
+class ReviewForm(FlaskForm):
+    rating = IntegerField('Note (1-5)', validators=[DataRequired(), NumberRange(min=1, max=5)])
+    content = TextAreaField('Votre commentaire', validators=[DataRequired()])
+    submit = SubmitField('Envoyer')
+
 @app.route ("/")
 def home():
     f = BookFormImport()
@@ -79,13 +84,45 @@ def home():
         page=page,
         total_pages=total_pages)
 
-@app.route("/detail/<id>")
+@app.route("/detail/<int:id>", methods=["GET", "POST"])
 def detail(id):
-    books = get_sample()
-    book = books[int(id)-1]
+    book = get_book(id)
+    if book is None:
+        return "Livre non trouvé.", 404
+
+    form = ReviewForm()
+    if form.validate_on_submit():
+        if not current_user.is_authenticated:
+            flash("Vous devez être connecté pour laisser un commentaire.")
+            return redirect(url_for('login'))
+
+        # Créer un nouvel objet Review
+        review = Review(
+            content=form.content.data,
+            rating=form.rating.data,
+            user_id=current_user.username,
+            book_id=book.id
+        )
+        db.session.add(review)
+        db.session.commit()
+        flash("Votre commentaire a été ajouté.")
+        return redirect(url_for('detail', id=book.id))
+
+    # Calculer la note moyenne
+    average_rating = db.session.query(db.func.avg(Review.rating)).filter_by(book_id=book.id).scalar()
+    if average_rating:
+        average_rating = round(average_rating, 2)
+
+    # Récupérer les commentaires associés au livre
+    reviews = Review.query.filter_by(book_id=book.id).order_by(Review.timestamp.desc()).all()
+
     return render_template(
-    "detail.html",
-    b=book)
+        "detail.html",
+        book=book,
+        form=form,
+        reviews=reviews,
+        average_rating=average_rating
+    )
     
 @app.route("/edit-author/<int:id>")
 @login_required
