@@ -2,22 +2,24 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center mb-4…s par auteur">Edit auteur : {{ author.name }}</h1>
+    <h1 class="text-center mb-4">Edit author: {{ author.name }}</h1>
 
     <!-- Affichage des livres -->
     <div class="text-center mb-4">
-        {% for book in books %}
-        <div class="d-inline-block mx-2">  <!-- Utilisation d'un bloc en ligne pour centrer les images -->
-            <a href="{{ book.url }}" target="_blank">
-                <img src="{{ url_for('static', filename='images/' + book.img) }}" 
-                     alt="{{ book.title }}" title="{{ book.title }}" 
-                     style="height: 200px; object-fit: cover;">
-            </a>
-            <div>{{ book.title }}</div> <!-- Ajout du titre du livre sous l'image -->
-        </div>
+        {% if books %}
+            {% for book in books %}
+            <div class="d-inline-block mx-2">
+                <a href="{{ book.url }}" target="_blank">
+                    <img src="{{ url_for('static', filename='images/' + book.img) }}" 
+                        alt="{{ book.title }}" title="{{ book.title }}" 
+                        style="height: 200px; object-fit: cover;">
+                </a>
+                <div>{{ book.title }}</div>
+            </div>
+            {% endfor %}
         {% else %}
-        <p>Aucun livre trouvé pour cet auteur.</p>
-        {% endfor %}
+            <p>Aucun livre trouvé pour cet auteur.</p>
+        {% endif %}
     </div>
 
     <form role="form" method="POST" action="{{ url_for('save_author') }}" class="mx-auto" style="max-width: 600px;">
@@ -27,7 +29,6 @@
             {{ form.name.label }}
             {{ form.name(size=50, class_="form-control") }}
         </div>
-
         {% if form.name.errors %}
         <ul class="list-group">
             {% for e in form.name.errors %}
@@ -37,8 +38,7 @@
         {% endif %}
 
         <div class="d-flex justify-content-end">
-            <button class="btn btn-danger mr-2" name="value" value="Supprimer" type="submit">Supprimer</button>
-            <button class="btn btn-primary" name="value" value="Enregistrer" type="submit">Enregistrer</button>
+            <input class="btn btn-primary mb-2" type="submit" value="Enregistrer">
         </div>
     </form>
 </div>

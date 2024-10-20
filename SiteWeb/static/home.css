@@ -1,17 +1,23 @@
-h1 {color: rgb(0, 0, 0);}
+h1 {color: rgb(0, 0, 0);
+}
+
 div.sample{
  text-align: center;
  margin-left: 25%;
  margin-right: 25%;
 }
-main{
- margin-top: 8em;
+
+main {
+    padding-top: 8em;
+    padding-bottom: 8em;
 }
-footer{
- position: fixed;
- bottom: 0;
- width: 100%;
+
+footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
 }
+
 main > .container {
     padding: 60px 15px 0;
    }
