@@ -21,7 +21,11 @@
             {% for book, author in results %}
                 <li>
                     <a href="{{ url_for('detail', id=book.id) }}">{{ book.title }}</a> par
-                    <a href="{{ url_for('edit_author', id=author.id) }}">{{ author.name }}</a>
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('edit_author', id=author.id) }}">{{ author.name }}</a>
+                    {% else %}
+                        <a href="{{ url_for('author_details', id=author.id) }}">{{ author.name }}</a>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>
