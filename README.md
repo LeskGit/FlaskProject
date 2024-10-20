@@ -29,3 +29,14 @@ Vous êtes maintenant prêt à lancer l'application.
 Vous n'aurez besoin d'utiliser cette commande qu'une seule fois. Si vous souhaitez relancer l'application, utilisez simplement **flask run**.
 
 ### Fonctionnalités ajoutées :
+
+- Edition/Suppression/Ajout Auteurs
+- Edition/Suppression/Ajout Livres
+- Login, Logout, Register
+- Import de données avec un fichier YAML
+- Barre de recherche fonctionnelle
+- Recherche avancée
+- Système de livre favoris par utilisateur
+- Site différent si utilisateur connecté ou non
+- Création d'une table genre
+- Ajout relation many to many

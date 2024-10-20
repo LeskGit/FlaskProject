@@ -11,7 +11,7 @@ from wtforms import PasswordField, SubmitField
 from .models import User
 from hashlib import sha256
 from flask_login import login_user, current_user, login_required
-from flask import request
+from flask import request, flash
 from flask_login import logout_user
 from .command import loaddb
 from wtforms import FileField, SubmitField
@@ -302,6 +302,44 @@ def author_details(id):
     a = get_author(id)  # Récupère l'auteur par son ID
     books = get_books_by_author(id)  # Récupère les livres de l'auteur
     return render_template("author-details.html", author=a, books=books)
+
+@app.route('/add_to_favorites/<int:book_id>', methods=['POST'])
+@login_required
+def add_to_favorites(book_id):
+    book = get_book(book_id)
+    if book is None:
+        return "Livre non trouvé.", 404
+
+    if book in current_user.favorites:
+        flash('Ce livre est déjà dans vos favoris.')
+    else:
+        current_user.favorites.append(book)
+        db.session.commit()
+        flash('Livre ajouté à vos favoris.')
+
+    return redirect(url_for('detail', id=book_id))
+
+@app.route('/remove_from_favorites/<int:book_id>', methods=['POST'])
+@login_required
+def remove_from_favorites(book_id):
+    book = get_book(book_id)
+    if book is None:
+        return "Livre non trouvé.", 404
+
+    if book in current_user.favorites:
+        current_user.favorites.remove(book)
+        db.session.commit()
+        flash('Livre retiré de vos favoris.')
+    else:
+        flash('Ce livre n\'est pas dans vos favoris.')
+
+    return redirect(url_for('detail', id=book_id))
+
+@app.route('/favorites')
+@login_required
+def favorites():
+    user_favorites = current_user.favorites
+    return render_template('favorites.html', books=user_favorites)
 
 @app.route("/logout/")
 def logout():

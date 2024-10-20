@@ -6,26 +6,42 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5"> <!-- Ajout d'une marge pour espacement -->
+<div class="container mt-5">
     <div class="row">
-        <div class="col-md-8 offset-md-2"> <!-- Centrer le contenu -->
-            <h1 class="display-4 text-center mb-4"> <!-- Centrage du titre -->
+        <div class="col-md-8 offset-md-2">
+            <h1 class="display-4 text-center mb-4">
                 {{ b.title }}
             </h1>
 
-            <div class="text-center mb-4"> <!-- Centrage de l'image -->
+            <div class="text-center mb-4">
                 <img src="{{ url_for('static', filename='images/' + b.img) }}"
                      alt="{{ b.title }}" 
                      title="{{ b.title }}" 
-                     class="img-fluid rounded"> <!-- img-fluid pour rendre l'image réactive, rounded pour les coins arrondis -->
+                     class="img-fluid rounded">
             </div>
 
-            <div class="form-inline d-flex justify-content-center"> <!-- Centrer le contenu -->
-                <ul class="list-unstyled"> <!-- Retire les puces des listes -->
-                    <li><strong>Author:</strong> {{ b.author.name }}</li>
-                    <li><strong>Genre:</strong> {{ b.genre.name }}</li>
+            <div class="form-inline d-flex justify-content-center">
+                <ul class="list-unstyled">
+                    <li><strong>Auteur :</strong> {{ b.author.name }}</li>
+                    <li><strong>Genre:</strong> {{ b.genre.name }}</li> 
                 </ul>
             </div>
+
+            {% if current_user.is_authenticated %}
+                {% if b in current_user.favorites %}
+                    <form action="{{ url_for('remove_from_favorites', book_id=b.id) }}" method="post">
+                        <button type="submit" class="btn btn-danger">
+                            Retirer des Favoris
+                        </button>
+                    </form>
+                {% else %}
+                    <form action="{{ url_for('add_to_favorites', book_id=b.id) }}" method="post">
+                        <button type="submit" class="btn btn-primary">
+                            Ajouter aux Favoris
+                        </button>
+                    </form>
+                {% endif %}
+            {% endif %}
         </div>
     </div>
 </div>
