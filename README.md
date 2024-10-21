@@ -40,3 +40,4 @@ Vous n'aurez besoin d'utiliser cette commande qu'une seule fois. Si vous souhait
 - Site différent si utilisateur connecté ou non
 - Création d'une table genre
 - Ajout relation many to many
+- Ajout commentaires et notes
