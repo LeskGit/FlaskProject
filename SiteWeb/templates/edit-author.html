@@ -38,7 +38,9 @@
         {% endif %}
 
         <div class="d-flex justify-content-end">
-            <input class="btn btn-primary mb-2" type="submit" value="Enregistrer">
+            <!-- Ajouter l'attribut 'name' au bouton pour que Flask puisse gérer les actions -->
+            <button class="btn btn-primary mb-2" type="submit" name="submit" value="Enregistrer">Enregistrer</button>
+            <button class="btn btn-danger mb-2 ml-2" type="submit" name="submit" value="Supprimer">Supprimer</button>
         </div>
     </form>
 </div>
